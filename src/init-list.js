@@ -29,8 +29,8 @@ function containsName(name) {
 /*
 Voegt de roll toe aan de lijst en maakt het bericht om terug te sturen.
 */
-function init(args, user) {
-    const rollList = initParser(args, user);
+function init(bonus, advantage, naam) {
+    const rollList = rollInit(bonus, advantage, naam);
     let initiative = rollList[0];
     let stringOutput = initiative.name + " heeft gerold: \`[" + (initiative.total - initiative.bonus);
     if (rollList.length > 1) {
@@ -67,32 +67,6 @@ function insertInitiative(initiative) {
     }
     initList.splice(i, 0, initiative);
     return true;
-}
-
-/*
-Gaat langs alle arguments nadat iemand '!init' heeft gebruikt. Dan checkt ie of er advantage
-is, of er een naam is, en of er een bonus is. Als er geen naam is, wordt de discord-naam
-van de gebruiker gebruikt.
-*/
-function initParser(args, user) {
-    let bonus = 0;
-    let name = "";
-    let k1 = false;
-
-    while (args.length > 0) {
-        const arg = args.shift();
-        if (arg === "k1") {
-            k1 = true;
-        } else if (isNaN(arg)) {
-            name += " " + arg;
-        } else {
-            bonus = parseInt(arg);
-        }
-    }
-    if (name === "") {
-        name = " " + user;
-    }
-    return rollInit(bonus, k1, name);
 }
 
 /*
