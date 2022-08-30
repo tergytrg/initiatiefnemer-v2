@@ -1,4 +1,4 @@
-const init = require('C:/Users/tygo/Documents/SlashBot test/src/init-list');
+const init = require('../init-list');
 
 module.exports = {
     name: 'ready',

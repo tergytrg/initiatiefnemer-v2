@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const init = require('.../init-list.js');
+const init = require('../../init-list');
 
 module.exports = {
     data: new SlashCommandBuilder()
