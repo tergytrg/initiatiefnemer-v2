@@ -40,7 +40,7 @@ function init(bonus, advantage, naam) {
         }
     }
     if (!insertInitiative(initiative)) {
-        return "Er bestaat al een initiative met de naam:" + initiative.name;
+        return "Er bestaat al een initiative met de naam: " + initiative.name;
     }
     stringOutput += "]\` Resultaat: " + initiative.total;
     return stringOutput;
@@ -86,40 +86,26 @@ function rollInit(bonus, advantage, name) {
 /*
 Voor het toevoegen van zelfgekozen rolls.
 */
-function custom(args) {
-    if (isNaN(args[0]) || isNaN(args[1])) {
-        return "dit herken ik niet. Stuur zoiets:\`!custom <rol zonder bonus> <bonus> <naam>\`";
+function custom(bonus, rol, naam) {
+    if (!insertInitiative(new Inititative(rol + bonus, bonus, naam))) {
+        return "Er bestaat al een initiative met de naam: " + naam;
     }
-    let bonus = parseInt(args[1]);
-    let total = parseInt(args[0]) + bonus;
-    let name = " " + args[2];
-
-    for (let i = 3; i < args.length; i++) {
-        name += " " + args[i];
-    }
-    if (!insertInitiative(new Inititative(total, bonus, name))) {
-        return "Er bestaat al een initiative met de naam:" + name;
-    }
-    return "Custom rol toegevoegd voor" + name + ": \`[" + (total - bonus)+ "]`\ Resultaat: " + total;
+    return "Custom rol toegevoegd voor " + naam + ": \`[" + rol + "]`\ Resultaat: " + (rol + bonus);
 }
 
 /*
 Voor het toevoegen van zelfgekozen rolls.
 */
-function remove(args) {
-    let name = "";
-    for (let i = 0; i < args.length; i++) {
-        name += " " + args[i];
-    }
-    if (!containsName(name)) {
-        return "Ik kan geen initiative vinden met de naam:" + name;
+function remove(naam) {
+    if (!containsName(naam)) {
+        return "Ik kan geen initiative vinden met de naam: " + naam;
     }
     i = 0;
-    while (initList[i].name != name) {
+    while (initList[i].name != naam) {
         i++;
     }
     initList.splice(i, 1);
-    return name + " succesvol verwijderd!";
+    return naam + " succesvol verwijderd van de initiative!";
 }
 
 /*
