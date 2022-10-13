@@ -23,7 +23,7 @@ module.exports = {
     async execute(interaction, client) {
     
         if (!init.isFresh()) {
-            msg.channel.send("**Pas op!**\nJe bent nu rolls aan een oude initiative aan het toevoegen. Je kunt een nieuwe initiative maken met !new");
+            await interaction.reply({content: "**Pas op!**\nJe bent nu rolls aan een oude initiative aan het toevoegen. Je kunt een nieuwe initiative maken met !new"});
         }
 
         let naam = interaction.options.getString('naam');
