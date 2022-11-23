@@ -33,7 +33,7 @@ module.exports = {
             naam = naam.slice(0, -1);
             console.log("naam " + naam);
             console.log("rol " + rol);
-            init.custom(i, rol - i, naam)
+            init.custom(0 - i, rol + i, naam)
         }
 
         await interaction.reply({content: "Oude initiative gestuurd!"});
