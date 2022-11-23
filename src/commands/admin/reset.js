@@ -22,7 +22,7 @@ module.exports = {
 
         let naam = interaction.options.getString('oud');
         const oldInits = naam.split(" ");
-        for (let i = 2; i < oldInits.length; i += 2) {
+        for (let i = 2; i < oldInits.length; i++) {
             let naam = oldInits[i];
             let j = i + 1;
             while(j < oldInits.length && !Number.isInteger(Number(oldInits[j]))) {
@@ -33,7 +33,8 @@ module.exports = {
             naam = naam.slice(0, -1);
             console.log("naam " + naam);
             console.log("rol " + rol);
-            init.custom(0 - i, rol + i, naam)
+            init.custom(0 - i, rol + i, naam);
+            i = j;
         }
 
         await interaction.reply({content: "Oude initiative gestuurd!"});
