@@ -6,6 +6,7 @@ Een bot voor dnd inititative rolls.
 Download de bovenstaande bestanden zoals gebruikelijk: via git, of als zip-bestand.
 
 Download ook NodeJS: https://nodejs.org/en/download/
+Deze moet ergens op je PC staan, verder hoef je er niet bij na te denken.
 
 ### 2. Instellen
 Voeg een zogeheten `dotenv` bestand toe. Dit bestand heeft geen naam, en een .env extensie. Hij zal dus gewoon `.env` heten, zonder de aanhalingstekens. Je kunt dit bestand maken door bijvoorbeeld in nodepad een bestand op te slaan genaamd ".env". Hieronder volgt een voorbeeld van de instellingen die in dat bestand moeten staan. 
