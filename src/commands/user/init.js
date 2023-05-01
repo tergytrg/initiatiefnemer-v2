@@ -20,21 +20,17 @@ module.exports = {
         .setDescription('Of de character advantage heeft op initiative')),
 
     async execute(interaction, client) {
-    
-        if (!init.isFresh()) {
-            await interaction.reply({content: "**Pas op!**\nJe bent nu rolls aan een oude initiative aan het toevoegen. Je kunt een nieuwe initiative maken met !new"});
-        }
-
         let naam = interaction.options.getString('naam');
-
         let bonus = interaction.options.getInteger('bonus');
         if (!bonus) {
             bonus = 0;
         }
-
         let advantage = interaction.options.getBoolean('advantage');
-
-        await interaction.reply({content: init.roll(bonus, advantage, naam)});
+        if (!init.isFresh()) {
+            await interaction.reply({content: init.roll(bonus, advantage, naam) + "\n**Pas op, oude initiative!**. Je kunt een nieuwe initiative maken met /new"});
+        } else {
+            await interaction.reply({content: init.roll(bonus, advantage, naam)});
+        }
         init.update();
     },
 }
