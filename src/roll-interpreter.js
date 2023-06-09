@@ -1,8 +1,19 @@
 function evaluateExpression(expression) {
-  const tokens = tokenize(expression);
-  const desugaredTokens = desugarTokens(tokens)
-  const parsedExpression = parseExpression(desugaredTokens);
-  return evaluate(parsedExpression);
+    let result = ""
+  expression.split(' ').forEach(word => {
+      result += "\n" + evaluateWord(word)
+  })
+    return result
+}
+
+function evaluateWord(word) {
+    const tokens = tokenize(word);
+    if (tokens === null) {
+        return word
+    }
+    const desugaredTokens = desugarTokens(tokens)
+    const parsedExpression = parseExpression(desugaredTokens);
+    return evaluate(parsedExpression);
 }
 
 function tokenize(expression) {
@@ -50,7 +61,7 @@ function parseExpression(tokens) {
         output.push(operatorStack.pop());
       }
       if (operatorStack.length === 0) {
-        throw new Error('Mismatched parentheses');
+        throw new Error('Volgens mij kloppen je haakjes niet.');
       }
       operatorStack.pop();
     } else {
@@ -67,7 +78,7 @@ function parseExpression(tokens) {
 
   while (operatorStack.length > 0) {
     if (operatorStack[operatorStack.length - 1] === '(') {
-      throw new Error('Mismatched parentheses');
+      throw new Error('Volgens mij kloppen je haakjes niet.');
     }
     output.push(operatorStack.pop());
   }
@@ -113,11 +124,7 @@ function evaluate(parsedExpression) {
       stack.push(result);
     }
   });
-  let output = ""
-  rollsList.forEach(list => {
-    output += "[" + list.toString() + "]"
-  })
-  return "\`" + output + "\`" + " Resultaat: " + stack.pop()
+  return rollToString(rollsList, stack.pop())
 }
 
 function roll_dice(amount, max) {
@@ -133,6 +140,14 @@ function roll_dice(amount, max) {
     }
   }
   return rolls
+}
+
+function rollToString(rollsList, result) {
+    let output = ""
+    rollsList.forEach(list => {
+        output += "[" + list.toString() + "]"
+    })
+    return "\`" + output + "\`" + " Resultaat: " + result
 }
 
 module.exports = {

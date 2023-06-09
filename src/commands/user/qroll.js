@@ -12,7 +12,12 @@ module.exports = {
         .setRequired(false)),
     async execute(interaction, client) {
         const args = interaction.options.getString('arguments')
-        const result = interaction.member.displayName + " heeft gerold: " + roller.interpret_and_roll(args)
+        let result = ""
+        try {
+            result = interaction.member.displayName + " heeft gerold: " + roller.interpret_and_roll(args)
+        } catch (e) {
+            result = e.toString()
+        }
         await interaction.reply({content: result});
     },
 }

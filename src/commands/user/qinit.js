@@ -25,7 +25,7 @@ module.exports = {
 
         while (args.length > 0) { // Alle args bijlangs gaan en kijken wat ze doen
             const arg = args.shift();
-            if (arg == "k1") {
+            if (arg === "k1") {
                 advantage = true;
             } else if (isNaN(arg)) {
                 naam += arg + " ";
