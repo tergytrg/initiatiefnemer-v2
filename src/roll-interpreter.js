@@ -41,13 +41,13 @@ function desugar(tokens) {
 
 function parse(tokens) {
     const precedence = {
+        'k': 1,
+        'kl': 1,
         '+': 1,
         '-': 1,
         '*': 2,
         '/': 2,
         'd': 3,
-        'k': 4,
-        'kl': 4,
         'unary-': 5,
         'unary+': 5
     };
@@ -93,13 +93,16 @@ function interpret(parsedExpression) {
     const stack = [];
     const rollsList = [];
     parsedExpression.forEach(token => {
-        if (typeof token === 'number') {
+        if (typeof token === 'number' || token instanceof Roll) {
             stack.push(token);
         } else {
-            const operand2 = stack.pop();
-            const operand1 = stack.pop();
+            let operand2 = stack.pop();
+            let operand1 = stack.pop();
             if (token.startsWith('unary')) {
-                stack.push(operand1)
+                if (operand1 !== undefined) {
+                    stack.push(operand1)
+                }
+                operand1 = 0
             }
             stack.push(interpretStatement(token, operand1, operand2));
         }
@@ -107,33 +110,132 @@ function interpret(parsedExpression) {
     return [rollsList, stack.pop()]
 }
 
+class Roll {
+    constructor(amount, max) {
+        this.amount = amount
+        this.max = max
+        this.multiplier = 1
+        this.modifier = 0
+        this.advantage = 0
+    }
+}
+
 function interpretStatement(token, operand1, operand2) {
+    switch (true) {
+        case typeof operand1 === 'number' && typeof operand2 === 'number':
+            return interpretNumbers(token, operand1, operand2);
+        case typeof operand1 === 'number' && operand2 instanceof Roll:
+            return interpretNumberRoll(token, operand1, operand2);
+        case operand1 instanceof Roll && typeof operand2 === 'number':
+            return interpretRollNumber(token, operand1, operand2);
+        case operand1 instanceof Roll && operand2 instanceof Roll:
+            return interpretRolls(token, operand1, operand2);
+    }
+}
+
+function interpretNumbers(token, number1, number2) {
     switch (token) {
         case 'unary-':
-            return -operand2
+            return -number2
         case 'unary+':
-            return operand2
+            return number2
         case '+':
-            return operand1 + operand2;
+            return number1 + number2;
         case '-':
-            return operand1 - operand2;
+            return number1 - number2;
         case '*':
-            return operand1 * operand2;
+            return number1 * number2;
         case '/':
-            return operand1 / operand2;
+            return number1 / number2;
         case 'd':
-            let result = 0
-            const rolls = roll_dice(operand1, operand2)
-            //rollsList.push(rolls)
-            result = 0
-            rolls.forEach(roll => {
-                result += roll
-            })
-            return result
+            return Roll.constructor(number1, number2);
         case 'k':
-            return operand1
+            return number1;
         case 'kl':
-            return operand1
+            return -number1;
+    }
+}
+
+function interpretRollNumber(token, roll, number) {
+    switch (token) {
+        case 'unary-':
+            return -number
+        case 'unary+':
+            return number
+        case '+':
+            roll.modifier += number;
+            return roll;
+        case '-':
+            roll.modifier -= number;
+            return roll;
+        case '*':
+            roll.multiplier *= number;
+            return roll;
+        case '/':
+            roll.multiplier /= number;
+            return roll;
+        case 'd':
+            return Roll.constructor(roll, number);
+        case 'k':
+            roll.advantage = number;
+            return roll;
+        case 'kl':
+            roll.advantage = -number;
+            return roll;
+    }
+}
+
+function interpretNumberRoll(token, number, roll) {
+    switch (token) {
+        case 'unary-':
+            roll.modifier *= -1;
+            return roll
+        case 'unary+':
+            return roll
+        case '+':
+            roll.modifier += number;
+            return roll;
+        case '-':
+            roll.modifier -= number;
+            roll.multiplier *= -1
+            return roll;
+        case '*':
+            roll.multiplier *= number;
+            return roll;
+        case '/': // Is this possible to do lazily?
+            return roll;
+        case 'd':
+            return Roll.constructor(number, roll);
+        case 'k':
+            return number
+        case 'kl':
+            return -number
+    }
+}
+
+function interpretRolls(token, roll1, roll2) {
+    switch (token) {
+        case 'unary-':
+            roll2.modifier *= -1;
+            return roll2;
+        case 'unary+':
+            return roll2;
+        case '+':
+            return interpretStatement(token, roll1.modifier, roll2);
+        case '-':
+            return interpretStatement(token, roll1.modifier, roll2);
+        case '*':
+            return interpretStatement(token, roll1.multiplier, roll2);
+        case '/':
+            return interpretStatement(token, roll1.multiplier, roll2);
+        case 'd':
+            return Roll.constructor(roll1, roll2);
+        case 'k':
+            roll1.advantage = roll2;
+            return roll1;
+        case 'kl':
+            roll1.advantage = interpretStatement('unary-', 0, roll2);
+            return roll1
     }
 }
 

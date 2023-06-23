@@ -1,10 +1,10 @@
 const sut = require('../src/roll-interpreter.js');
 
 const tests = [
+    { expression: '-2*-3', expected: 6 },
     { expression: '1+2', expected: 3 },
     { expression: '2*3+4', expected: 10 },
     { expression: '4-2/2', expected: 3 },
-    { expression: '-2*-3', expected: 6 },
     { expression: '5+(-2)', expected: 3 },
     { expression: '-4*-(-2)', expected: -8 },
     { expression: '10/5*2', expected: 4 },
