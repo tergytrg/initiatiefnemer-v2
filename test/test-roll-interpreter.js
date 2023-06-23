@@ -27,14 +27,41 @@ const tests = [
     { expression: '2*-(3+4)', expected: -14 },
     { expression: '-2*(3+4)', expected: -14 },
     { expression: '-2*(3+4)/-2', expected: 7 },
-    { expression: '1+-2*(3-4/2)', expected: -1 }
+    { expression: '1+-2*(3-4/2)', expected: -1 },
+    { expression: '0+0', expected: 0 },
+    { expression: '0*5-0/10', expected: 0 },
+    { expression: '0+(0*0)', expected: 0 },
+    { expression: '0*(0+(0-0))', expected: 0 }
 ];
+
+let number_passed = 0
+let number_failed = 0
 
 tests.forEach(({ expression, expected }) => {
     console.log(`Expression: ${expression}`);
-    console.log(`Expected: ${expected}`);
+    console.log(`Expect: ${expected}`);
     const result = sut.evaluateWord(expression)[1];
     console.log(`Result: ${result}`);
-    console.log(`Test ${result === expected ? 'passed' : 'FAILED'}`);
+    if (result === expected) {
+        console.log('\x1b[1m\x1b[32m%s\x1b[0m', 'Passed')
+        number_passed += 1
+    } else {
+        console.log('\x1b[1m\x1b[31m%s\x1b[0m', 'Failed')
+        number_failed += 1
+    }
     console.log('---');
 });
+
+if (number_failed === 0) {
+    const output = `Passed ${number_passed}/${number_passed} tests`
+    const color = '\x1b[1m\x1b[32m%s\x1b[0m'
+    console.log(color, '♥'.repeat(output.length))
+    console.log(color, output)
+    console.log(color, '♥'.repeat(output.length))
+} else {
+    const output = `Passed ${number_passed}/${number_passed + number_failed} tests`
+    const color = '\x1b[1m\x1b[31m%s\x1b[0m'
+    console.log(color, '!'.repeat(output.length))
+    console.log(color, output)
+    console.log(color, '!'.repeat(output.length))
+}

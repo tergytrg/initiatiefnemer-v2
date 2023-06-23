@@ -26,7 +26,7 @@ function desugar(tokens) {
     for (let i = 0; i < tokens.length; i++) {
         if (isNaN(tokens[i - 1]) && tokens[i - 1] !== ')') {
             if (tokens[i] === '-' || tokens[i] === '+') {
-                tokens[i] += 'u'
+                tokens[i] = 'unary' + tokens[i]
             } else if (tokens[i] === 'd') {
                 tokens.splice(i, 0, 1);
             }
@@ -48,8 +48,8 @@ function parse(tokens) {
         'd': 3,
         'k': 4,
         'kl': 4,
-        '-u': 5,
-        '+u': 5
+        'unary-': 5,
+        'unary+': 5
     };
     const output = [];
     const operatorStack = [];
@@ -92,58 +92,49 @@ function parse(tokens) {
 function interpret(parsedExpression) {
     const stack = [];
     const rollsList = [];
-    let k = 0;
-    let kl = 0;
     parsedExpression.forEach(token => {
         if (typeof token === 'number') {
             stack.push(token);
         } else {
             const operand2 = stack.pop();
             const operand1 = stack.pop();
-            let result;
-
-            switch (token) {
-                case '+':
-                    result = operand1 + operand2;
-                    break;
-                case '-':
-                    result = operand1 - operand2;
-                    break;
-                case '*':
-                    result = operand1 * operand2;
-                    break;
-                case '/':
-                    result = operand1 / operand2;
-                    break;
-                case 'd':
-                    const rolls = roll_dice(operand1, operand2)
-                    rollsList.push(rolls)
-                    result = 0
-                    rolls.forEach(roll => {
-                        result += roll
-                    })
-                    break;
-                case 'k':
-                    result = operand1
-                    k = operand2
-                    break;
-                case 'kl':
-                    result = operand1
-                    kl = operand2
-                    break;
-                case '-u':
-                    stack.push(operand1)
-                    result = 0 - operand2
-                    break;
-                case '+u':
-                    stack.push(operand1)
-                    result = operand2
+            if (token.startsWith('unary')) {
+                stack.push(operand1)
             }
-
-            stack.push(result);
+            stack.push(interpretStatement(token, operand1, operand2));
         }
     });
     return [rollsList, stack.pop()]
+}
+
+function interpretStatement(token, operand1, operand2) {
+    switch (token) {
+        case 'unary-':
+            return -operand2
+        case 'unary+':
+            return operand2
+        case '+':
+            return operand1 + operand2;
+        case '-':
+            return operand1 - operand2;
+        case '*':
+            return operand1 * operand2;
+        case '/':
+            return operand1 / operand2;
+        case 'd':
+            let result = 0
+            const rolls = roll_dice(operand1, operand2)
+            //rollsList.push(rolls)
+            result = 0
+            rolls.forEach(roll => {
+                result += roll
+            })
+            return result
+        case 'k':
+            return operand1
+        case 'kl':
+            return operand1
+    }
 }
 
 function roll_dice(amount, max) {
