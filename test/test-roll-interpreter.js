@@ -31,7 +31,23 @@ const tests = [
     { expression: '0+0', expected: 0 },
     { expression: '0*5-0/10', expected: 0 },
     { expression: '0+(0*0)', expected: 0 },
-    { expression: '0*(0+(0-0))', expected: 0 }
+    { expression: '0*(0+(0-0))', expected: 0 },
+    { expression: '1d20', expected: 10 },
+    { expression: '3d6', expected: 9 },
+    { expression: '10d2', expected: 10 },
+    { expression: '2d4+1', expected: 5 },
+    { expression: '2*(1d10+3)', expected: 16 },
+    { expression: '(2d6+1)*3', expected: 21 },
+    { expression: '2*(1d10+3)', expected: 16 },
+    { expression: '(2d6+1)*3', expected: 21 },
+    { expression: '4d8', expected: 16 },
+    { expression: '5d4-2', expected: 8 },
+    { expression: '6d3+2d6', expected: 15 },
+    { expression: '2d10*3', expected: 30 },
+    { expression: '(1d6+2d4)*2', expected: 14 },
+    { expression: '2d8-1d4', expected: 6 },
+    { expression: '2d6/3', expected: 2 },
+    { expression: '3d4+2d4-1', expected: 9 }
 ];
 
 let number_passed = 0
@@ -40,7 +56,7 @@ let number_failed = 0
 tests.forEach(({ expression, expected }) => {
     console.log(`Expression: ${expression}`);
     console.log(`Expect: ${expected}`);
-    const result = sut.evaluateWord(expression)[1];
+    const result = sut.evaluateWord(expression);
     console.log(`Result: ${result}`);
     if (result === expected) {
         console.log('\x1b[1m\x1b[32m%s\x1b[0m', 'Passed')

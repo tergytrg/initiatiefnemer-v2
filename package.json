@@ -12,5 +12,8 @@
   },
   "author": "trg",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "unit.js": "^2.1.1"
+  }
 }
