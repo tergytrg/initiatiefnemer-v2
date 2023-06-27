@@ -15,14 +15,14 @@ function evaluateWord(word) {
     const desugaredTokens = desugar(tokens)
     const parsedExpression = parse(desugaredTokens);
     const interpretedExpression = interpret(parsedExpression)[1];
-    return unwrapExpression(interpretedExpression)
+    return uw(interpretedExpression)
 }
 
-function unwrapExpression(expression) {
+function uw(expression) {
     if (typeof expression === 'number') {
         return expression
     } else if (expression instanceof Roll) {
-        return expression.roll()
+        return expression.average()
     }
 }
 
@@ -144,13 +144,44 @@ class Roll {
         this.advantage = 0
     }
 
-    roll() {
-        const result = (unwrapExpression(this.amount) * unwrapExpression(this.max) / 2) * unwrapExpression(this.multiplier) + unwrapExpression(this.modifier)
+    unwrap() {
+        this.amount = uw(this.amount)
+        this.max = uw(this.max)
+        this.multiplier = uw(this.multiplier)
+        this.modifier = uw(this.modifier)
+        this.advantage = uw(this.advantage)
+    }
+
+    average() {
+        this.unwrap()
+        const result = this.amount * this.max / 2 * this.multiplier + this.modifier
         this.amount = 1
         this.max = result
         this.multiplier = 1
         this.modifier = 0
         return result
+    }
+
+    roll() {
+        this.unwrap()
+        if (this.amount < 0) {
+            throw RangeError("Je kunt niet minder dan nul dobbelstenen rollen.")
+        }
+        let sum = 0
+        for (let i = 0; i < this.amount; i++) {
+            if (this.max > 0) {
+                sum += Math.ceil(Math.random() * this.max)
+            } else {
+                sum += Math.floor(Math.random() * this.max)
+            }
+        }
+        sum *= this.multiplier
+        sum += this.modifier
+        this.amount = 1
+        this.max = sum
+        this.multiplier = 1
+        this.modifier = 0
+        return sum
     }
 }
 
@@ -247,21 +278,6 @@ function interpretNumberRoll(token, number, roll) {
             roll.advantage = interpretStatement('unary-', 0, number);
             return roll
     }
-}
-
-function roll_dice(amount, max) {
-    if (amount < 0) {
-        throw RangeError("Je kunt niet minder dan nul dobbelstenen rollen.")
-    }
-    const rolls = []
-    for (let i = 0; i < amount; i++) {
-        if (max > 0) {
-            rolls.push(Math.ceil(Math.random() * max))
-        } else {
-            rolls.push(Math.floor(Math.random() * max))
-        }
-    }
-    return rolls
 }
 
 function evaluationToString(rollsList, result) {

@@ -47,7 +47,8 @@ const tests = [
     { expression: '(1d6+2d4)*2', expected: 14 },
     { expression: '2d8-1d4', expected: 6 },
     { expression: '2d6/3', expected: 2 },
-    { expression: '3d4+2d4-1', expected: 9 }
+    { expression: '3d4+2d4-1', expected: 9 },
+    { expression: 'd20d20d20', expected: 1000 }
 ];
 
 let number_passed = 0
