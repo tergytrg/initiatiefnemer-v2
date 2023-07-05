@@ -5,12 +5,12 @@ module.exports = {
     once: true,
     async execute(client) {
         console.log('Ready!');
-
-        try {
-            init.setChannel(client.channels.cache.get(process.env.CHANNEL));
-        } catch (error) {
-            console.log(error);
-        }
+        //
+        // try {
+        //     init.setChannel(client.channels.cache.get(process.env.CHANNEL));
+        // } catch (error) {
+        //     console.log(error);
+        // }
 
         async function pickPresence () {
             const option = Math.floor(Math.random() * statusArray.length);

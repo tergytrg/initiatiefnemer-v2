@@ -1,6 +1,5 @@
 const initList = []; // Het hart van deze bot: De lijst met initiatives
 let initMsg;
-let initChannel;
 let lastUpdated = Date.now();
 
 function Inititative(total, bonus, name) { // Init constructor
@@ -11,10 +10,6 @@ function Inititative(total, bonus, name) { // Init constructor
 
 Inititative.prototype.toString = function() {
     return this.name + ": \`" + this.total + "\`";
-}
-
-function setChannel(channel) {
-    initChannel = channel;
 }
 
 function containsName(name) {
@@ -120,7 +115,7 @@ async function update() {
     try {
         initMsg.edit(resString);
     } catch (error) {
-        initMsg = await initChannel.send(resString);
+        console.log(resString);
     }
 }
 
