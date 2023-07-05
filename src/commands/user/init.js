@@ -31,6 +31,6 @@ module.exports = {
         } else {
             await interaction.reply({content: init.roll(bonus, advantage, naam)});
         }
-        init.update();
+        await init.update();
     },
 }

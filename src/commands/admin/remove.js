@@ -14,6 +14,6 @@ module.exports = {
     async execute(interaction, client) {
         let naam = interaction.options.getString('naam');
         await interaction.reply({content: init.remove(naam)});
-        init.update();
+        await init.update();
     },
 }
