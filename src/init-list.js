@@ -134,7 +134,6 @@ function isFresh() {
 
 module.exports = {
     isFresh: isFresh,
-    setChannel: setChannel,
     roll: init,
     update: update,
     new: newInit,
